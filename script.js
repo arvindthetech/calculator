@@ -6,8 +6,16 @@ let arr = Array.from(buttons);
 arr.forEach(button => {
     button.addEventListener('click' , (e) =>{
         if(e.target.innerHTML == '='){
-            string = eval(string);
-            input.value = string;
+            try {
+                // Handle percentage calculation
+                if (string.includes('%')) {
+                    string = makePercentageExpression(string);
+                }
+                string = eval(string);
+                input.value = string;
+            } catch (error) {
+                input.value = 'Error';
+            }
         }
 
         else if(e.target.innerHTML == 'AC'){
@@ -25,4 +33,16 @@ arr.forEach(button => {
             input.value = string;
         }
     })
-})
+});
+
+function makePercentageExpression(expression) {
+    const checker = /(\d+)%(\d+)/;
+    const match = expression.match(checker);
+    if (match) {
+        const percentage = parseFloat(match[1]);
+        const value = parseFloat(match[2]);
+        const result = (percentage / 100) * value;
+        expression = expression.replace(checker, result);
+    }
+    return expression;
+}
